@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Course Scheduler</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                background-color: #f2f2f2;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                /* background-image: url("background.jpg"); */
+                background-size: cover;
+                background-position: center;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+            .container {
+                background-color: rgba(255, 255, 255, 0.8);
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                width: 400px;
+            }
+            .row {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            /* Replace your current input CSS with this */
+            .row input[placeholder="Subject"] {
+                width: 100px;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
+            .row input[placeholder="Course Number"] {
+                width: 100px;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
+            .row input[placeholder="CRN"] {
+                width: 100px;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
+            .row button {
+                padding: 8px;
+                border: none;
+                background-color: #f44336;
+                color: white;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+            .row button:hover {
+                background-color: #d32f2f;
+            }
+            .add-row {
+                margin-bottom: 20px;
+                background-color: #2196f3;
+                color: white;
+                padding: 10px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                width: 100%;
+            }
+            .add-row:hover {
+                background-color: #1976d2;
+            }
+            .download {
+                background-color: #4caf50;
+                color: white;
+                padding: 12px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                width: 100%;
+            }
+            .download:hover {
+                background-color: #388e3c;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div id="fields-container">
+                <div class="row">
+                    <input type="text" placeholder="Subject" />
+                    <input type="text" placeholder="Course Number" />
+                    <input type="text" placeholder="CRN" />
+                    <button onclick="removeRow(this)">x</button>
+                </div>
+            </div>
+            <button class="add-row" onclick="addRow()">Add Row</button>
+            <button class="download" onclick="downloadICS()">
+                Download ICS
+            </button>
+        </div>
+        <script>
+            function addRow() {
+                const container = document.getElementById("fields-container");
+
+                const row = document.createElement("div");
+                row.className = "row";
+
+                row.innerHTML = `
+                <input type="text" placeholder="Subject">
+                <input type="text" placeholder="Course Number">
+                <input type="text" placeholder="CRN">
+                <button onclick="removeRow(this)">x</button>
+            `;
+
+                container.appendChild(row);
+            }
+
+            function removeRow(button) {
+                button.parentElement.remove();
+            }
+
+            function downloadICS() {
+                const rows = document.querySelectorAll(
+                    "#fields-container .row",
+                );
+                const courses = [];
+
+                rows.forEach((row) => {
+                    const inputs = row.querySelectorAll("input");
+                    const subject = inputs[0].value.trim();
+                    const number = inputs[1].value.trim();
+                    const crn = inputs[2].value.trim();
+
+                    if (subject && number && crn) {
+                        courses.push({ subject, number, crn });
+                    }
+                });
+
+                const blob = new Blob([JSON.stringify(courses, null, 2)], {
+                    type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "courses.ics";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        </script>
+    </body>
+</html>
